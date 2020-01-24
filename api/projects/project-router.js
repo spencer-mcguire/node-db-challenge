@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const Projects = require('../../data/helpers/project-model');
-const Resources = require('../../data/helpers/resource-model');
+const Tasks = require('../../data/helpers/task-model');
 
 // GET all projects
 router.get('/', (req, res) => {
@@ -40,11 +40,23 @@ router.get('/:id', (req, res) => {
 // POST new project
 router.post('/', (req, res) => {
   Projects.addProject(req.body)
-    .then(newProject => res.json(newProject))
+    .then(newProject => res.status(201).json(newProject))
     .catch(err => {
       res
         .status(500)
         .json({ message: 'Something happened when adding project' });
+    });
+});
+
+//POST new task for a project
+router.post('/:id/tasks', (req, res) => {
+  Tasks.addTask({ project_id: req.params.id, ...req.body })
+    .then(newTask => res.status(201).json(newTask))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error_message: `Something happened when adding an task for project: ${req.project.id}.`
+      });
     });
 });
 

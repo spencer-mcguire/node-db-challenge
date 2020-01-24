@@ -1,4 +1,5 @@
 const db = require('../dbConfig');
+const mappers = require('./mappers');
 
 module.exports = {
   findProjects,
@@ -7,7 +8,9 @@ module.exports = {
 };
 
 function findProjects() {
-  return db('projects');
+  return db('projects').then(projects =>
+    projects.map(project => mappers.projectToBody(project))
+  );
 }
 
 function findProjectId(id) {
